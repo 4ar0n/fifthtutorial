@@ -1,3 +1,7 @@
+person_mapping_table = [[1,"Aaron"],[2, "Vincent"],[3,"Sir Ying"],[4,"Jason"],[5,"Billy"]]
+good_mapping_table = [45,"banana"],[46,"apple"],[47,"melon"],[48,"orange"]
+price_mapping_table = [[45,4],[46,6],[47,20],[48,3]]
+
 data=[[datetime(2020, 1, 6), 3, 45],
  [datetime(2020, 1, 10), 1, 48],
  [datetime(2020, 1, 28), 3, 45],
