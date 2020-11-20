@@ -51,3 +51,6 @@ data=[[datetime(2020, 1, 6), 3, 45],
  [datetime(2020, 12, 5), 1, 45],
  [datetime(2020, 12, 10), 4, 45],
  [datetime(2020, 12, 28), 5, 46]]
+x= data[0][0]
+y=x.strftime("%Y-%m-%d")
+print(y)

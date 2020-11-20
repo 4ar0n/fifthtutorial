@@ -1,48 +1,22 @@
-person_db = [
-                ["Name","Sex","Age","Strength"],
-                ["Aaron",False,28,["Basketball","100m","Teaching Competition"]],
-                ["Twiggy",True,29,["Mahjong","Nothing at all"]],
-                ["Billy",False,31,["Scam","etoro"]],
-                ["Jason",False,33,["Butterfly Stroke"]],
-            ]
-# # Billy is a Male, he is 31, and he has 2 strength(s), they are scam and etoro.
-def get_sex(value):
-    if value == True:
-        return ["female","she"]
+from pprint import pprint
+
+person_db = {
+            "Aaron":{ "Sex":False, "Age":28 , "Strength":["Basketball","100m","Teaching Competition"]},
+            "Twiggy":{ "Sex":True, "Age":29 , "Strength":["Mahjong","Nothing at all"]},
+            "Billy":{ "Sex":False, "Age":31 , "Strength":["Scam","etoro"] },
+            "Jason":{ "Sex":False, "Age":33 , "Strength":["Butterfly Stroke", "1+1-you" ]},
+
+        }
+
+# print ( person_db["Aaron"]["Age"] )
+for person,info in person_db.items():
+    print (person_db[person]["Age"])
+    if person_db[person]["Age"] > 30:
+        person_db[person]["Maturity"] = "Old"
     else:
-        return ["male","he"]
+        person_db[person]["Maturity"] = "Young"
 
-# # ("%s is a %s, %s is %s, %s has %s strength,)
-person_db.pop(0)
-
-for person in person_db:
-    name = person[0]
-    gender = get_sex(person[1])  
-    sex = gender[0]
-    pronoun = gender[1]
-
-
-
-    age = person[2]
-    strengths = person[3]
-    num_of_person = len(strengths)
-    first_part = "%s is a %s, %s is %s, %s has %s strength(s), they are "%(name,sex,pronoun,age,pronoun,num_of_person)
-    second_part = ""
-    for strength in strengths:
-        second_part+=strength
-        second_part+=" and "
-    second_part=second_part[0:-5]
-    second_part+="."
-    statement = first_part + second_part
-
-    print (statement)
-# for person in person_db:
-#     strengths = person[3]
-#     for strength in strengths:
-#         print (strength)
-
-
-
+print (person_db)
 
 
 
