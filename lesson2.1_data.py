@@ -1,55 +1,49 @@
-import sys
-from selenium import webdriver
-from selenium.webdriver.support import expected_conditions as EC
-import os
-import selenium
-from selenium import webdriver
-import time
-#from PIL import Image
-import io
-#import requests
-#from webdriver_manager.chrome import ChromeDriverManager
-from selenium.common.exceptions import ElementClickInterceptedException
-options = webdriver.ChromeOptions()
-options.add_argument('--disable-extensions')
-options.add_argument('--profile-directory=Default')
-options.add_argument("--incognito")
-options.add_argument("--disable-plugins-discovery")
-options.add_argument("--start-maximized")
-# driver = webdriver.Chrome(chrome_options=chrome_options)
-driver = webdriver.Chrome(executable_path='/Users/aaronlee/codes/pys/selenium/chromedriver')
-
-driver.delete_all_cookies()
-#driver = webdriver.Chrome(ChromeDriverManager().install())
-driver = webdriver.Chrome()
-
-driver.get("https://www.etoro.com/login") #前往這個網址
-
-
-username = driver.find_element_by_id("username")
-#username = driver.find_element_by_class_name("input-row-ph")
-#username.clear()
-
-#print(username)
-username.send_keys("goddamn90")
-
-password = driver.find_element_by_id("password")
-#password.clear()
-password.send_keys("Ab159951")
-
-driver.implicitly_wait(30) # seconds
-
-driver.find_element_by_class_name("w-login-btn-wrapp").click()
-driver.find_element_by_class_name("w-login-btn-wrapp").click()
-
-for i in range(10):
-    time.sleep(60)
-    driver.find_element_by_tag_name("button").click()
-
-
-#WebDriverWait wait = new WebDriverWait(driver, 20);
-#wait.until(ExpectedConditions.elementToBeClickable(By.tag_name("button"))).click();
-
-
-#driver.find_element_by_automatiion-id("login-sts-btn-sign-in").click()
-#driver.close()
+data=[[datetime(2020, 1, 6), 3, 45],
+ [datetime(2020, 1, 10), 1, 48],
+ [datetime(2020, 1, 28), 3, 45],
+ [datetime(2020, 2, 2), 4, 48],
+ [datetime(2020, 2, 15), 3, 45],
+ [datetime(2020, 2, 23), 4, 45],
+ [datetime(2020, 3, 5), 4, 45],
+ [datetime(2020, 3, 6), 2, 45],
+ [datetime(2020, 3, 8), 2, 48],
+ [datetime(2020, 3, 20), 1, 45],
+ [datetime(2020, 4, 26), 4, 47],
+ [datetime(2020, 4, 28), 3, 46],
+ [datetime(2020, 5, 17), 1, 47],
+ [datetime(2020, 5, 18), 1, 47],
+ [datetime(2020, 5, 28), 3, 47],
+ [datetime(2020, 6, 9), 2, 46],
+ [datetime(2020, 6, 12), 2, 46],
+ [datetime(2020, 6, 16), 2, 47],
+ [datetime(2020, 6, 22), 5, 48],
+ [datetime(2020, 6, 24), 5, 48],
+ [datetime(2020, 7, 4), 4, 46],
+ [datetime(2020, 7, 9), 4, 45],
+ [datetime(2020, 7, 20), 5, 48],
+ [datetime(2020, 7, 22), 4, 45],
+ [datetime(2020, 7, 25), 2, 47],
+ [datetime(2020, 7, 26), 5, 45],
+ [datetime(2020, 7, 28), 3, 46],
+ [datetime(2020, 7, 28), 4, 48],
+ [datetime(2020, 8, 2), 5, 46],
+ [datetime(2020, 8, 3), 4, 46],
+ [datetime(2020, 8, 6), 1, 48],
+ [datetime(2020, 8, 7), 3, 48],
+ [datetime(2020, 8, 28), 1, 48],
+ [datetime(2020, 9, 3), 4, 48],
+ [datetime(2020, 9, 26), 1, 47],
+ [datetime(2020, 9, 28), 3, 47],
+ [datetime(2020, 10, 7), 3, 47],
+ [datetime(2020, 10, 9), 1, 46],
+ [datetime(2020, 10, 20), 3, 47],
+ [datetime(2020, 10, 22), 1, 46],
+ [datetime(2020, 10, 22), 2, 48],
+ [datetime(2020, 10, 23), 3, 48],
+ [datetime(2020, 10, 27), 3, 48],
+ [datetime(2020, 11, 1), 2, 47],
+ [datetime(2020, 11, 17), 4, 46],
+ [datetime(2020, 11, 24), 2, 48],
+ [datetime(2020, 12, 5), 1, 45],
+ [datetime(2020, 12, 10), 4, 45],
+ [datetime(2020, 12, 28), 5, 46]]
