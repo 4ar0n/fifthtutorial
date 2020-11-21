@@ -87,7 +87,4 @@ Question 1c (*advanced)
 Write a FUNCTION to show filtered transactions by name_id ,  good_id  and month, *PLUS your function need to capable of showing all transactions or filter just good_id or just name_id etc.
 
 
-hint1 :  def func(x=1,y=2):
-hint2 :  if x in []
-
 
