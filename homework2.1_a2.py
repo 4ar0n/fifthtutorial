@@ -5,11 +5,13 @@ from pprint import pprint
 
 def get_csv_dict(file):
     data  =  []
+
     with open(file) as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=',')
+
         for row in csv_reader:
             data.append(dict(row))
-    # return data[0:1000]
+    # return data[0:5]
     return data
 
 def post_csv_dict(data,csv_columns,filename):
@@ -22,6 +24,13 @@ def post_csv_dict(data,csv_columns,filename):
                 writer.writerow(row)
     except IOError:
         print("I/O error")
+# [ 0, 1, 2, 3, 4, 5, 6, 7, 8]
+# [10,15,16,16,13,14,15,18,29]
+#            X
+# day =3
+# starting = 3
+# (data[day-3]+data[day-2]+data[day-1])/day
+
 
 def get_sma_from_csv(data,field_name,date_th,day):
     total = 0
@@ -79,7 +88,7 @@ def trade(data,percentage,day,field_name):
 
 au_raw_file = "/Users/aaronlee/pycourse/lesson2/datasets/FX_XAUUSD_intraday_60.csv"
 au_raw_data = get_csv_dict(au_raw_file)
-
+# pprint (au_raw_data)
 # day = 7
 # au_trade_data = trade(au_raw_data,0.02,day,"close")
 
@@ -97,10 +106,9 @@ for i in range (start,end):
             best_day = day
             best_rate = rate
 
-
 print (max_profit , best_rate ,  best_day)
-# csv_columns=[]
-# for k, v in au_trade_data[day].items():
-#     csv_columns.append(k)
-# output_file = au_raw_file[:-4]+"_results.csv"
-# post_csv_dict(au_trade_data[data],csv_columns,output_file)
+csv_columns=[]
+for k, v in au_trade_data[day].items():
+    csv_columns.append(k)
+output_file = au_raw_file[:-4]+"_results.csv"
+post_csv_dict(au_trade_data[data],csv_columns,output_file)
