@@ -34,16 +34,16 @@ def post_csv_dict(data,csv_columns,filename):
 # (data[day-3]+data[day-2]+data[day-1])/day
 
 def make_sma_dict(data,field_name,day):
-    #trimmed_day_data is declared for to hold only the 20:00:00,21:00:00,22:00:00,23:00:00 data
+    #trimmed_day_data is declared for to hold only the last data of the day
     trimmed_day_data=OrderedDict() 
     #sma_dict is the ultimate product of this function which provides a lookup table for "date" to "sma"
     sma_dict={}
     for entry in data:
-        if entry['datetime'][11:] in ["20:00:00","21:00:00","22:00:00","23:00:00","11:00:00"]:
+        if entry['datetime'][11:] in ["11:00:00","20:00:00","21:00:00","22:00:00","23:00:00"]:
             trimmed_day_data[entry['datetime'][:10]]=float(entry[field_name])
         
         
-            #create an empty dictionary with only date keys e.g. {"2017-01-09":0,"2017-01-10":0,.... }
+        #create an empty dictionary with only date keys e.g. {"2017-01-09":0,"2017-01-10":0,.... }
         sma_dict[entry['datetime'][:10]] = "None"
 
 
@@ -55,20 +55,17 @@ def make_sma_dict(data,field_name,day):
 
         #2. for every date in the sma_dict , loop the trimmed data to find the index of the trimmed data where the date is found.
         for i in range (0,len(trimmed_day_data)):
-            # its a little bit complicatedm because, unlike list its its not that straight forward to get the KEY of the dictionary, e.g. its 10th element of the data {"2017-01-09":1234.5} 
-            # print (list(trimmed_day_data.items())[i][0])
-            # print ("date1: "+date , "date2: "+list(trimmed_day_data.items())[i][0])
+            # its a little bit complicated because, unlike list its its not that straight forward to get the KEY of the dictionary, 
+            # list(trimmed_day_data.items()) is the ith element , and then we need to turn it to the list, so that the key becomes the [0] of the list
             if date == list(trimmed_day_data.items())[i][0]: 
-
                 pos = i 
                 #once found, break the loop
                 break
-
-        # #since we can only trade when the pos is larger than the day for a day-sma, ie. for a 7 day average, there are at least 7 data ahead of it, ie. its at least the 8th position withe the index of 7. its also to ensure the j index below >=0 otherwise some garbage results may come out.
         
 
-        # to make sure the first sma is calculated after day days of of
+        # to make sure pos is found
         if pos is not None:
+
             first_day_str = (list(trimmed_day_data.items())[0][0])
 
             first_day = datetime.strptime(first_day_str, '%Y-%m-%d')
@@ -84,36 +81,24 @@ def make_sma_dict(data,field_name,day):
                 # when pos is 7, j is 0 
                 # then j is 1
                 # then j is 2... until j is 6, when 7 data is added to the total and the sma is calculated.
-                    # print (j)
+                    
                     total += list(trimmed_day_data.items())[j][1]
-                    # if date == "2018-01-04":
-                    #     print (date , list(trimmed_day_data.items())[j][1])
-                    # x=input("wait")
+
                 sma_dict[date] = round(total / day,2)
 
 
-    # pprint (sma_dict)
     return sma_dict
 
-    # total = 0
-    # for i in range(date_th-day,date_th):
-    #     total += float(data[i][field_name])
-    # sma = total / day
-    # return round(sma,2)
+
 
 
 def insert_sma(data,day,field_name):
     for i in range (0,len(data)):
-        # pprint (data[i]['datetime'][:10])
-        # pprint (sma_dict)
-        # x=input("wait")
         data[i][field_name+"_sma"] = sma_dict.get(data[i]['datetime'][:10],None)
-        # print (data[i][field_name+"_sma"])
     return data
 
 def trade(data,percentage,day,field_name):
     data = insert_sma( data , day , field_name )
-    # pprint (type(data[0]['close_sma']))
     asset = profit = lot = 0
     for i  in range( 0,len(data) ):
         if data[i][field_name+"_sma"] != "None":
@@ -142,11 +127,6 @@ def trade(data,percentage,day,field_name):
                 data[i]["decision"] = "Hold"
 
 
-
-    # print ("Profit:  %s" % "${:,.2f}".format(profit))
-    # print ("Assets:  %s" % "${:,.2f}".format(asset))
-    # print ("Lot : %s"% str(lot))
-    # pprint (data)
 
     output = {
         "csv" : data,
