@@ -65,12 +65,12 @@ def make_sma_dict(data,field_name,day):
             first_day = datetime.strptime(first_day_str, '%Y-%m-%d')
             today = datetime.strptime(date, '%Y-%m-%d')
 
-            total = 0
 
             #list(trimmed_day_data).index(date) returns the index of the date in the trimmed_day_data
             # make sure there are day-number of data because calculating day-sma
-            if list(trimmed_day_data).index(date) >= day :
 
+            if list(trimmed_day_data).index(date) >= day :
+                total = 0
                 for j in range(pos-day,pos):
                 # when pos is 7, j is 0 
                 # then j is 1
