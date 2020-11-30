@@ -26,12 +26,6 @@ def post_csv_dict(data,csv_columns,filename):
                 writer.writerow(row)
     except IOError:
         print("I/O error")
-# [ 0, 1, 2, 3, 4, 5, 6, 7, 8]
-# [10,15,16,16,13,14,15,18,29]
-#            X
-# day =3
-# starting = 3
-# (data[day-3]+data[day-2]+data[day-1])/day
 
 def make_sma_dict(data,field_name,day):
     #trimmed_day_data is declared for to hold only the last data of the day
