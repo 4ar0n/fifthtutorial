@@ -35,7 +35,7 @@ def make_sma_dict(data,field_name,day):
     for entry in data:
         if entry['datetime'][11:] in ["11:00:00","20:00:00","21:00:00","22:00:00","23:00:00"]:
             trimmed_day_data[entry['datetime'][:10]]=float(entry[field_name])
-        
+            # {'2018-01-01':1433,'2018-01-02',1455}
         
         #create an empty dictionary with only date keys e.g. {"2017-01-09":0,"2017-01-10":0,.... }
         sma_dict[entry['datetime'][:10]] = "None"
