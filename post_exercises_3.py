@@ -1,7 +1,39 @@
-import random
-from pprint import pprint
-from datetime import datetime
-import csv
+'''
+Aaron is a tuition business owner with two centres at Prince Edward and Causeway bay respectively.
+His accounting system database is a typical relational database that you the entry has to be looked up to other table to become meaningful.
+
+The data for 2018 and 2019 are stored in post_exercises_3_db.csv
+
+Requirement:
+3.1 download / and output the post_exercises_3_db.csv AS dictionary and transalate them into a meaningful data eg:
+
+{'amount': 8235, 'branch': 1,'credit': 9, 'date': '2019-11-4','debit': 42,'id': 4946}  ==>
+{'amount': 8235, 'branch': "Prince Edward",'credit': Cash, 'date': '2019-11-4','debit': Stationery,'id': 4946} 
+
+and then output to post_exercises_3_db2.csv
+
+
+
+3.2
+Produce an Income statement for the year of 2019 and output to a googlesheet
+Where Income statement: REVENUES - EXPENSES = NET PROFIT
+LIST ALL ITEMS with items and amount (do not list 0 items)
+
+Produce a BALANCE SHEET  for the year of 2019and output to a googlesheet
+Where ASSETS (of all time)= LIABILITIES (of all time) + CAPITAL (of all time) + NET PROFIT (of 2019)
+LIST ALL ITEMS with items and amount (do not list 0 items)
+
+3.3
+Produce a branch comparative income statement and balance sheet for comparasion between Causeway Bay and Prince Edward for 2018 and output to a googlesheet.
+with the following format:
+ITEMS Pince Edward , Causeway Bay
+
+3.4
+Procuce a year compartive balance sheet for comparasion between 2018 and 2019,% change is to be reported. output to a googlesheet
+with the following format: ITEMS 2018, 2019 ,% change
+
+
+'''
 
 ac_type_db = [  {"id":1,"category":"Asset"},
                 {"id":2,"category":"Liability"},
@@ -25,44 +57,3 @@ ac_db =     [   {"id":1,"category":1,"account":"Bank"},
 branch_db =     [   {"id":1,"branch":"Prince Edward"},
                     {"id":2,"branch":"Causeway Bay"},
                 ]
-
-accs = []
-for ac in ac_db:
-    accs.append(ac['id'])
-pprint (accs)
-
-
-transactions = []
-
-for i  in range (1,5000):
-    branch = random.choice([1,2])
-    dr = random.choice(accs)
-    cr = random.choice(accs)
-    amount = random.randint(500, 10000)
-    year = random.randint(2018, 2019)
-    month = random.randint(1, 12)
-    day = random.randint(1, 28)
-    date = "%d-%d-%d"%(year,month,day)
-    transaction={'date':date , 'id':i,'branch':branch,'debit':dr,'credit':cr,"amount":amount}
-    # pprint (transaction)
-    transactions.append(transaction)
-
-csv_columns=[]
-for k, v in transactions[0].items():
-    csv_columns.append(k)
-
-def post_csv_dict(data,csv_columns,filename):
-
-
-    try:
-        with open(filename, 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-            writer.writeheader()
-            for row in data:
-                writer.writerow(row)
-    except IOError:
-        print("I/O error")
-
-filename="/Users/aaronlee/Documents/python/fifthtutorial/post_exercises_3.csv"
-
-post_csv_dict(transactions,csv_columns,filename)
