@@ -121,7 +121,7 @@ for i  in range (5,5000):
     {'date':date , 'id':i,'branch':1,'debit':9,'credit':4,"amount":920},    
     {'date':date , 'id':i,'branch':2,'debit':9,'credit':4,"amount":920},
     {'date':date , 'id':i,'branch':random.choice([1, 2]),'debit':12,'credit':4,"amount":random.randint(15, 200)},
-    {'date':date , 'id':i,'branch':random.choice([1, 2]),'debit':5,'credit':1,"amount":random.randint(800, 5000)},
+    {'date':date , 'id':i,'branch':random.choice([1, 2]),'debit':8,'credit':1,"amount":random.randint(800, 5000)},
     {'date':date , 'id':i,'branch':random.choice([1, 2]),'debit':13,'credit':9,"amount":random.randint(20, 300)},
     {'date':date , 'id':i,'branch':random.choice([1, 2]),'debit':6,'credit':1,"amount":random.choice([8000, 9000])},
     {'date':date , 'id':i,'branch':random.choice([1, 2]),'debit':7,'credit':1,"amount":random.choice([1500,4300,8500])},

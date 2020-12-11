@@ -78,22 +78,78 @@ def import_csv_url(CSV_URL):
 def turn_list_to_dict(key,data):
     dict={}
     for row in data:
-        dict[str(row[key])]=row
+        dict[row[key]]=row
     return dict
 
 
 ac_type_dict = turn_list_to_dict("id",ac_type_db)
 ac_dict = turn_list_to_dict("id",ac_db)
 branch_dict = turn_list_to_dict("id",branch_db)
-pprint (branch_dict)
+
 path = 'https://raw.githubusercontent.com/4ar0n/fifthtutorial/master/post_exercises_3_db.csv'
 
 entries =  import_csv_url(path)
 
 for i in range (0, len(entries)):
-    print (entries[i]['credit'])
-    entries[i]['cr_type'] = ac_db[entries[i]['credit']]
-pprint (entries)
+    entries[i]['cr_type'] = ac_type_dict[ac_dict[entries[i]['credit']]['category']]["category"]
+    entries[i]['dr_type'] = ac_type_dict[ac_dict[entries[i]['debit']]['category']]["category"]
+    entries[i]['cr_name'] = ac_dict[entries[i]['credit']]['account']
+    entries[i]['dr_name'] = ac_dict[entries[i]['debit']]['account']
+    entries[i]['branch_name'] = branch_dict[entries[i]['branch']]['branch']
+
+
+# pprint (entries)
+tb ={}
+
+for id, ac in ac_dict.items():
+    tb[id] = 0
+
+
+
+for entry in entries:
+    for ac , amt in tb.items():
+        if entry['debit'] == ac:
+            tb[ac]+=entry['amount']
+        if entry['credit'] == ac:
+            tb[ac]-=entry['amount']
+
+
+
+def category_statement(cat_id):
+    cat_list = [[ac_type_dict[cat_id]['category']]]
+    for ac , acinfo in ac_dict.items():
+        if acinfo["category"] == cat_id:
+            cat_list.append([ac_dict[ac]['account'] , tb[ac]])
+    return cat_list
+
+
+pprint ( category_statement(1) )
+pprint ( category_statement(2) )
+pprint ( category_statement(3) )
+pprint ( category_statement(4) )
+pprint ( category_statement(5) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
