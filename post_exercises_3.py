@@ -148,6 +148,6 @@ def post_csv_dict(data,csv_columns,filename):
 	except IOError:
 		print("I/O error")
 
-filename="/Users/aaronlee/Documents/python/fifthtutorial/post_exercises_3.csv"
+filename="/Users/aaronlee/Documents/python/fifthtutorial/post_exercises_3_db.csv"
 
 post_csv_dict(transaction,csv_columns,filename)
