@@ -1,115 +1,279 @@
+'''
+Aaron is a tuition business owner with two centres at Prince Edward and Causeway bay respectively.
+His accounting system database is a typical relational database that you the entry has to be looked up to other table to become meaningful.
+The data for 2018 and 2019 are stored in post_exercises_3_db.csv
+Requirement:
+3.1 download / and output the post_exercises_3_db.csv AS dictionary and transalate them into a meaningful data eg:
+{'amount': 8235, 'branch': 1,'credit': 9, 'date': '2019-11-4','debit': 42,'id': 4946}  ==>
+{'amount': 8235, 'branch': "Prince Edward",'credit': Cash, 'date': '2019-11-4','debit': Stationery,'id': 4946} 
+and then output to post_exercises_3_db2.csv
 
-# 1.import csv FX_XAUUSD_intraday_60.csv
-# 2.write a program trade according to the x% of y-days moving averages :buy or square
-# 3.find an optimum value of x and y to maximize the profit
-# 4.output the csv with the ma and decision made.
-# 5.use matlab to plot the candlestick graph for the data
+'''
+
+ac_type_db = [  {"id":1,"category":"Asset"},
+                {"id":2,"category":"Liability"},
+                {"id":3,"category":"Capital"},
+                {"id":4,"category":"Revenues"},
+                {"id":5,"category":"Expenses"},
+            ]
+ac_db =     [   {"id":1,"category":1,"account":"Bank"},
+                {"id":2,"category":3,"account":"Aaron's Capital"},
+                {"id":3,"category":4,"account":"Tuition Income"},
+                {"id":4,"category":2,"account":"Loan from Billy"},
+                {"id":5,"category":5,"account":"Rental Expenses"},
+                {"id":6,"category":1,"account":"Furnitures"},
+                {"id":7,"category":5,"account":"Salaries"},
+                {"id":9,"category":1,"account":"Cash"},
+                {"id":22,"category":5,"account":"Printing Expenses"},
+                {"id":42,"category":5,"account":"Stationery"},
+                {"id":53,"category":4,"account":"Government Subsidy"},
+            ]
+
+branch_db =     [   {"id":1,"branch":"Prince Edward"},
+                    {"id":2,"branch":"Causeway Bay"},
+                ]
+
+cr_plus = ["Revenues", "Liability", "Capital"]
+db_plus = ["Expenses", "Asset"]
 
 
-#Question 1
 import csv
 import requests
 from pprint import pprint
 
-CSV_URL = 'https://raw.githubusercontent.com/4ar0n/fifthtutorial/master/FX_XAUUSD_intraday_60.csv'
+def import_csv_url(CSV_URL):
 
-with requests.Session() as s:
-    download = s.get(CSV_URL)
+	with requests.Session() as s:
+		download = s.get(CSV_URL)
+		decoded_content = download.content.decode('utf-8')
+		cr = csv.DictReader(decoded_content.splitlines(), delimiter=',')
+		my_list = list(cr)
 
-    decoded_content = download.content.decode('utf-8')
-
-    cr = csv.reader(decoded_content.splitlines(), delimiter=',')
-    my_list = list(cr)
-  
-
-#Question 2
-def mvg_avg(list, record_no, no_of_days):
-    sub_total=0
-    for i in range(record_no, record_no + no_of_days):
-        sub_total = sub_total + float(list[i][4])
-    mvg_avg = sub_total/int(no_of_days)
-    return float(mvg_avg)
-
-def mvg_avg_buy_sell_strategy(list, x, no_of_days, capital, bite_size):
-
-    cash_balance = capital
-    no_of_shares = 0
-
-    for i in range(1+no_of_days,len(list)):
-
-        if float(list[i][4]) > mvg_avg(list,i - no_of_days,no_of_days)*(1+x) and cash_balance > float(list[i][4])*bite_size:
-            cash_balance = cash_balance - float(list[i][4])*bite_size
-            no_of_shares = no_of_shares + bite_size
-
-        if float(list[i][4]) < mvg_avg(list,i - no_of_days,no_of_days)*(1-x) and no_of_shares > bite_size:
-            cash_balance = cash_balance + float(list[i][4])*bite_size
-            no_of_shares = no_of_shares - bite_size
-
-    profit = int(cash_balance) + int(no_of_shares*float(list[len(list)-1][4])) - capital
-    return profit
-
-    # print("Cash Balance : " + str(int(cash_balance)))
-    # print("No of Shares : " + str(no_of_shares))
-    # # print(my_list[len(my_list)-1][4])
-    # print("MV of Shares : " + str(int(no_of_shares*float(list[len(list)-1][4]))))
-    # print("Profit : " + str(profit))
+	return my_list
 
 
-#Question 3
 
-dict_profit={}
-q = 0
-best_days = 0
-best_delta = 0
-best_profit = 0
+def interpret_csv(biz_data_raw):
 
-for d in range(2, 30):
-    for r in range(1,2):
-        
-        profit = mvg_avg_buy_sell_strategy(my_list, r/100, d, 10000, 1)
-        dict_profit_sub = {}
-        dict_profit_sub["Days"] = d
-        dict_profit_sub["Delta%"] = r
-        dict_profit_sub["Profit"] = profit
-        dict_profit["S" + str(q)] = dict_profit_sub
-        q+=1
-        if profit > best_profit:
-            best_profit = profit
-            best_days = d
-            best_delta = r
+	for i in biz_data_raw:
 
-pprint(dict_profit)
+		for j in branch_db:
+			if str(j["id"]) == str(i["branch"]):
+				i["branch"] = j["branch"]
 
-best_result ={}
-best_result['Days'] = best_days
-best_result['Delta'] = best_delta
-best_result['Profit'] = best_profit
+		for h in ac_db:
+			if str(h["id"]) == str(i["credit"]):
+				i["credit"] = h["account"]
+				for k in ac_type_db:
+					if k["id"] == h["category"]:
+						i["cr_acct_type"] = k["category"]
+			if str(h["id"]) == str(i["debit"]):
+				i["debit"] = h["account"]
+				for k in ac_type_db:
+					if k["id"] == h["category"]:
+						i["db_acct_type"] = k["category"]
 
-pprint(best_result)
+	return biz_data_raw
 
-# for key, value in dict_profit.items():
-#   print(key, value)
+path = 'https://raw.githubusercontent.com/4ar0n/fifthtutorial/master/post_exercises_3_db.csv'
+biz_data_raw = import_csv_url(path)
+biz_data_dict=interpret_csv(biz_data_raw)
 
-# Question 4
-with open('/Users/user/pycourse/Homework/csvfile.csv','w') as csv_file:
-    writer = csv.writer(csv_file, delimiter=',')
-    writer.writerows(dict_profit.items())
+# pprint(biz_data_dict)
 
+'''
+3.2
+Produce an Income statement for the year of 2019
+Where Income statement: REVENUES - EXPENSES = NET PROFIT
+LIST ALL ITEMS with items and amount (do not list 0 items)
+Produce a BALANCE SHEET  for the year of 2019
+Where ASSETS (of all time)= LIABILITIES (of all time) + CAPITAL (of all time) + NET PROFIT (of 2019)
+LIST ALL ITEMS with items and amount (do not list 0 items)
 
-# Question 5
+'''
 
-import ssl
-ssl._create_default_https_context = ssl._create_unverified_context
-
-import plotly.graph_objects as go
-
-import pandas as pd
 from datetime import datetime
 
-df = pd.read_csv('https://raw.githubusercontent.com/4ar0n/fifthtutorial/master/FX_XAUUSD_intraday_60.csv')
+def income_summary(biz_data_dict, year_period, branch):
 
-fig = go.Figure(data=[go.Candlestick(x=df['datetime'],
-                open=df['open'],
-                high=df['high'],
-                low=df['low'],
-                close=df['close'])])
+	summary = {}
+	for i in ac_type_db:
+		summary[i["category"]] =0
+
+	for i in biz_data_dict:
+
+		if year_period[0] <= datetime.strptime(i["date"], "%Y-%m-%d") <= year_period[1] and i["branch"] in branch:	
+
+			if i["cr_acct_type"] in cr_plus:
+				summary[i["cr_acct_type"]]+=int(i["amount"])
+			else:
+				summary[i["cr_acct_type"]]-=int(i["amount"])
+
+			if i["db_acct_type"] in db_plus:
+				summary[i["db_acct_type"]]+=int(i["amount"])
+			else:
+				summary[i["db_acct_type"]]-=int(i["amount"])	
+
+	summary["Check"] = 0
+	for k, v in summary.items():
+		if k in db_plus:
+			summary["Check"]+=v
+		else:
+			summary["Check"]-=v
+	return summary
+
+# pprint(income_summary(biz_data_dict, [datetime(2018, 1, 1),datetime(2019, 12, 31)], ["Prince Edward", "Causeway Bay"]))
+
+def income_statement(biz_data_dict, year_period, branch):
+
+	summary = {}
+	summary["Net Profit"] = 0
+	for i in ac_db:
+		if i["category"] in [4,5]:
+			summary[i["account"]] =0
+
+	for i in biz_data_dict:
+
+		if year_period[0] <= datetime.strptime(i["date"], "%Y-%m-%d") <= year_period[1] and i["branch"] in branch:	
+
+			if i["cr_acct_type"] == "Revenues":
+				summary[i["credit"]]+=int(i["amount"])
+			elif i["cr_acct_type"] == "Expenses":
+				summary[i["credit"]]-=int(i["amount"])
+
+
+			if i["db_acct_type"] == "Revenues":
+				summary[i["debit"]]-=int(i["amount"])
+			elif i["db_acct_type"] == "Expenses":
+				summary[i["debit"]]+=int(i["amount"])
+
+	
+	for i in ac_db:
+		if i["category"] in [4]:
+			summary["Net Profit"]+=summary[i["account"]]
+		elif i["category"] in [5]:
+			summary["Net Profit"]-=summary[i["account"]]
+
+	return summary
+
+# pprint(income_statement(biz_data_dict, [datetime(2019, 1, 1),datetime(2019, 12, 31)], ["Prince Edward", "Causeway Bay"]))
+
+def balance_sheet(biz_data_dict, year_period, branch):
+
+	summary = {}
+	summary["Check"] = 0
+	for i in ac_db:
+		if i["category"] in [1,2,3]:
+			summary[i["account"]] = 0
+
+	for i in biz_data_dict:
+
+		if year_period[0] <= datetime.strptime(i["date"], "%Y-%m-%d") <= year_period[1] and i["branch"] in branch:	
+
+			if i["cr_acct_type"] in ["Asset"]:
+				summary[i["credit"]]-=int(i["amount"])
+			elif i["cr_acct_type"] in ["Liability", "Capital"]:
+				summary[i["credit"]]+=int(i["amount"])
+
+			if i["db_acct_type"] in ["Asset"]:
+				summary[i["debit"]]+=int(i["amount"])
+			elif i["db_acct_type"] in ["Liability", "Capital"]:
+				summary[i["debit"]]-=int(i["amount"])
+
+	summary["Aaron's Capital"]+=income_statement(biz_data_dict, year_period, branch)["Net Profit"]
+	
+	for i in ac_db:
+		if i["category"] in [1]:
+			summary["Check"]+=summary[i["account"]]
+		elif i["category"] in [2,3]:
+			summary["Check"]-=summary[i["account"]]
+
+	return summary
+
+pprint(balance_sheet(biz_data_dict, [datetime(2019, 1, 1),datetime(2019, 12, 31)], ["Prince Edward", "Causeway Bay"]))
+
+
+'''
+3.3
+Produce a branch comparative income statement and balance sheet for comparasion between Causeway Bay and Prince Edward for 2018.
+with the following format:
+ITEMS Pince Edward , Causeway Bay
+'''
+def income_comparison(year_period, branch, comparison_factor):
+
+	Headings = ["ITEMS"]
+	Income_list =[]
+
+	if comparison_factor == "branch":
+		for i in branch:
+			Income_list.append(income_statement(biz_data_dict,year_period,i))
+			Headings.append(i)
+
+	if comparison_factor == "year":
+		for i in year_period:
+			Income_list.append(income_statement(biz_data_dict,i,branch))
+			Headings.append(i)
+
+
+	Overall_Income = [Headings]
+
+	for k, v in Income_list[0].items():
+		tmp_entry =[]
+		tmp_entry.append(k)
+		tmp_entry.append(v)
+		for g in range (1, len(Income_list)):
+			tmp_entry.append(Income_list[g][k])
+		Overall_Income.append(tmp_entry)
+
+	return Overall_Income
+
+income_comparison = income_comparison([[datetime(2018, 1, 1),datetime(2018, 12, 31)], [datetime(2019, 1, 1),datetime(2019, 12, 31)]], ["Prince Edward", "Causeway Bay"], "year")
+# income_comparison = income_comparison([datetime(2018, 1, 1),datetime(2018, 12, 31)], ["Prince Edward", "Causeway Bay"], "branch")
+pprint(income_comparison)
+
+'''
+3.4
+Procuce a year compartive balance sheet for comparasion between 2018 and 2019,% change is to be reported.
+with the following format: ITEMS 2018, 2019 ,% change
+'''
+
+
+def bs_comparison(year_period, branch, comparison_factor):
+
+	Headings = ["ITEMS"]
+	BS_list =[]
+
+	if comparison_factor == "branch":
+		for i in branch:
+			BS_list.append(balance_sheet(biz_data_dict,year_period,i))
+			Headings.append(i)
+
+	if comparison_factor == "year":
+		BS_list.append(balance_sheet(biz_data_dict,year_period[0],branch))
+		Headings.append(year_period[0])
+		
+		for i in range(1, len(year_period)):
+			BS_list.append(balance_sheet(biz_data_dict,year_period[i],branch))
+			Headings.append(year_period[i])
+			Headings.append("YoY Chg")
+
+
+	Overall_BS = [Headings]
+
+	for k, v in BS_list[0].items():
+		tmp_entry =[]
+		tmp_entry.append(k)
+		tmp_entry.append(v)
+		# tmp_entry.append("N/A")
+		for g in range (1, len(BS_list)):
+			tmp_entry.append(BS_list[g][k])
+			if BS_list[g-1][k] == 0:
+				tmp_entry.append("N/A")
+			else:
+				tmp_entry.append("{:.2%}".format(BS_list[g][k]/BS_list[g-1][k] - 1))
+		Overall_BS.append(tmp_entry)
+
+	return Overall_BS
+
+BS_comparison = bs_comparison([[datetime(2018, 1, 1),datetime(2018, 12, 31)], [datetime(2019, 1, 1),datetime(2019, 12, 31)]], ["Prince Edward", "Causeway Bay"], "year")
+pprint(BS_comparison)
