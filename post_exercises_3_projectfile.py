@@ -32,6 +32,9 @@ with the following format: ITEMS 2018, 2019 ,% change
 
 
 '''
+import csv
+import requests
+from pprint import pprint
 
 ac_type_db = [  {"id":1,"category":"Asset"},
                 {"id":2,"category":"Liability"},
@@ -56,4 +59,44 @@ ac_db =     [   {"id":1,"category":1,"account":"Bank"},
 branch_db =     [   {"id":1,"branch":"Prince Edward"},
                     {"id":2,"branch":"Causeway Bay"},
                 ]
+
+def import_csv_url(CSV_URL):
+
+    with requests.Session() as s:
+        download = s.get(CSV_URL)
+        decoded_content = download.content.decode('utf-8')
+        cr = csv.DictReader(decoded_content.splitlines(), delimiter=',')
+        my_list = list(cr)
+    for row in my_list:
+        for key, val in row.items():
+            try:
+                row[key] = int(val)
+            except:
+                pass
+    return my_list
+
+def turn_list_to_dict(key,data):
+    dict={}
+    for row in data:
+        dict[str(row[key])]=row
+    return dict
+
+
+ac_type_dict = turn_list_to_dict("id",ac_type_db)
+ac_dict = turn_list_to_dict("id",ac_db)
+branch_dict = turn_list_to_dict("id",branch_db)
+pprint (branch_dict)
+path = 'https://raw.githubusercontent.com/4ar0n/fifthtutorial/master/post_exercises_3_db.csv'
+
+entries =  import_csv_url(path)
+
+for i in range (0, len(entries)):
+    print (entries[i]['credit'])
+    entries[i]['cr_type'] = ac_db[entries[i]['credit']]
+pprint (entries)
+
+
+
+
+
 
