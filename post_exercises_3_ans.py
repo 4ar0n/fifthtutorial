@@ -162,8 +162,8 @@ def financial_statements(beg,end):
     expenses = category_statement(5,entries , beg , end)
     netprofit = net_profit(revenues , expenses)
 
-    capital += ["Retained Profits" , retained_profits]
-    capital += ["Net Profit" , netprofit]
+    capital += [["Retained Profits" , retained_profits]]
+    capital += [["Net Profit" , netprofit]]
 
 
     balance_sheet  = assets + liabilities + capital
