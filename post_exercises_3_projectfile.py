@@ -35,6 +35,7 @@ with the following format: ITEMS 2018, 2019 ,% change
 import csv
 import requests
 from pprint import pprint
+from datetime import datetime , timedelta
 
 ac_type_db = [  {"id":1,"category":"Asset"},
                 {"id":2,"category":"Liability"},
@@ -67,6 +68,7 @@ def import_csv_url(CSV_URL):
         decoded_content = download.content.decode('utf-8')
         cr = csv.DictReader(decoded_content.splitlines(), delimiter=',')
         my_list = list(cr)
+
     for row in my_list:
         for key, val in row.items():
             try:
@@ -96,39 +98,91 @@ for i in range (0, len(entries)):
     entries[i]['cr_name'] = ac_dict[entries[i]['credit']]['account']
     entries[i]['dr_name'] = ac_dict[entries[i]['debit']]['account']
     entries[i]['branch_name'] = branch_dict[entries[i]['branch']]['branch']
+    entries[i]['date'] = datetime.strptime(entries[i]['date'], "%Y-%m-%d")
 
 
 # pprint (entries)
-tb ={}
 
-for id, ac in ac_dict.items():
-    tb[id] = 0
-
-
-
-for entry in entries:
-    for ac , amt in tb.items():
-        if entry['debit'] == ac:
-            tb[ac]+=entry['amount']
-        if entry['credit'] == ac:
-            tb[ac]-=entry['amount']
+def cal_balance(ac_id ,entries, beg,end):
+    balance = 0
+    for entry in entries:
+        if entry['date']>=beg and entry['date']<=end:
+            if entry['debit'] == ac_id:
+                balance+=entry['amount']
+            if entry['credit'] == ac_id:
+                balance-=entry['amount']
+    return balance
 
 
 
-def category_statement(cat_id):
+def category_statement(cat_id , entries , beg, end):
     cat_list = [[ac_type_dict[cat_id]['category']]]
     for ac , acinfo in ac_dict.items():
         if acinfo["category"] == cat_id:
-            cat_list.append([ac_dict[ac]['account'] , tb[ac]])
+            ac_name = ac_dict[ac]['account']
+            cat_list.append([ac_name, cal_balance(ac ,entries, beg,end)])
     return cat_list
 
+def net_profit(revenues_list , expenses_list):
+    netprofit = 0 
+    for item in revenues_list:
+        try:
+            netprofit += item[1]
+        except:
+            pass
 
-pprint ( category_statement(1) )
-pprint ( category_statement(2) )
-pprint ( category_statement(3) )
-pprint ( category_statement(4) )
-pprint ( category_statement(5) )
+    for item in expenses_list:
+        try:
+            netprofit += item[1]
+        except:
+            pass
 
+    return netprofit
+
+
+opening =  datetime(1980,1,1,0,0)
+end_2018 = datetime(2018,12,31,0,0)
+
+beg_2019 = datetime(2019,1,1,0,0)
+end_2019 = datetime(2019,12,31,0,0)
+
+# print (cal_balance(1 ,entries, beg ,end_2019))
+
+def financial_statements(beg,end):
+    assets = category_statement(1,entries , opening , end)
+    liabilities= category_statement(2,entries , opening , end)
+    
+    capital = category_statement(3,entries , opening , end)
+
+    retained_revenues = category_statement(4,entries , opening , beg-timedelta(days=1))
+    retained_expenses = category_statement(5,entries , opening , beg-timedelta(days=1))
+    retained_profits = net_profit(retained_revenues , retained_expenses)
+
+    revenues = category_statement(4,entries , beg , end)
+    expenses = category_statement(5,entries , beg , end)
+    netprofit = net_profit(revenues , expenses)
+
+    capital += ["Retained Profits" , retained_profits]
+    capital += ["Net Profit" , netprofit]
+
+
+
+
+
+    balance_sheet  = assets + liabilities + capital
+    income_statement =  revenues + expenses + ["Net Profit" , netprofit]
+
+    return (income_statement,balance_sheet)
+
+fs_2019 = financial_statements(beg_2019,end_2019)
+pprint (fs_2019[0])
+pprint (fs_2019[1])
+
+# # pprint (assets)
+# # pprint (capital)
+# # pprint (liabilities)
+# # pprint (revenues)
+# # pprint (expenses)
 
 
 
