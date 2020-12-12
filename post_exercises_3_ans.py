@@ -166,9 +166,6 @@ def financial_statements(beg,end):
     capital += ["Net Profit" , netprofit]
 
 
-
-
-
     balance_sheet  = assets + liabilities + capital
     income_statement =  revenues + expenses + ["Net Profit" , netprofit]
 
