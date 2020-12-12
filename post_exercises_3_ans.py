@@ -32,14 +32,54 @@ with the following format: ITEMS 2018, 2019 ,% change
 
 
 '''
+
+import httplib2
+import os
+
+from apiclient import discovery
+from google.oauth2 import service_account
+
+from pprint import pprint
+cred_path = "/Users/aaronlee/Downloads/my-project-20190202-7af09df97e06.json"
+
+def write_sheet_data(spreadsheet_id , sheetname ,  data):
+    # REFERENCE https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/batchUpdate
+    try:
+        scopes = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/spreadsheets"]
+        secret_file = cred_path
+
+        credentials = service_account.Credentials.from_service_account_file(secret_file, scopes=scopes)
+        service = discovery.build('sheets', 'v4', credentials=credentials)
+        
+        range_ = sheetname  # TODO: Update placeholder value.
+
+        # How the input data should be interpreted.
+        value_input_option = "USER_ENTERED"  # TODO: Update placeholder value.
+
+        value_range_body = {'values': data}
+            # TODO: Add desired entries to the request body. All existing entries
+            # will be replaced.
+        
+
+        request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=range_, valueInputOption=value_input_option, body=value_range_body)
+        response = request.execute()
+
+
+        # TODO: Change code below to process the `response` dict:
+        pprint(response)
+
+
+    except OSError as e:
+        print (e)
+
 import csv
 import requests
 from pprint import pprint
 from datetime import datetime , timedelta
 
-ac_type_db = [  {"id":1,"category":"Asset"},
-                {"id":2,"category":"Liability"},
-                {"id":3,"category":"Capital"},
+ac_type_db = [  {"id":1,"category":"Assets"},
+                {"id":2,"category":"Liabilities"},
+                {"id":3,"category":"Capitals"},
                 {"id":4,"category":"Revenues"},
                 {"id":5,"category":"Expenses"},
             ]
@@ -116,7 +156,7 @@ def cal_balance(ac_id ,entries, beg,end):
 
 
 def category_statement(cat_id , entries , beg, end):
-    cat_list = [[ac_type_dict[cat_id]['category']]]
+    cat_list = [[ac_type_dict[cat_id]['category'].upper()]]
     for ac , acinfo in ac_dict.items():
         if acinfo["category"] == cat_id:
             ac_name = ac_dict[ac]['account']
@@ -166,20 +206,19 @@ def financial_statements(beg,end):
     capital += [["Net Profit" , netprofit]]
 
 
-    balance_sheet  = assets + liabilities + capital
-    income_statement =  revenues + expenses + ["Net Profit" , netprofit]
+    balance_sheet  = [["Balance Sheet" , "as at "+end.strftime("%Y-%m-%d")]] + assets + liabilities + capital
+    income_statement =  [["Income Statement" , "for the year ended " + end.strftime("%Y-%m-%d")]] +revenues + expenses + [["Net Profit" , netprofit]]
 
     return {"is":income_statement,"bs":balance_sheet}
 
 fs_2019 = financial_statements(beg_2019,end_2019)
-pprint (fs_2019["is"])
-pprint (fs_2019["bs"])
+# pprint (fs_2019["is"])
+# pprint (fs_2019["bs"])
 
-# # pprint (assets)
-# # pprint (capital)
-# # pprint (liabilities)
-# # pprint (revenues)
-# # pprint (expenses)
+
+spreadsheet_id="1PqiDuIRV8BuDAzcjFdH_z0HTWaP0sr7TCRdUpDIPrcU"
+write_sheet_data(spreadsheet_id , "a1" , fs_2019["is"])
+write_sheet_data(spreadsheet_id , "d1" , fs_2019["bs"])
 
 
 
