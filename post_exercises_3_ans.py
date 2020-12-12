@@ -169,11 +169,11 @@ def financial_statements(beg,end):
     balance_sheet  = assets + liabilities + capital
     income_statement =  revenues + expenses + ["Net Profit" , netprofit]
 
-    return (income_statement,balance_sheet)
+    return {"is":income_statement,"bs":balance_sheet}
 
 fs_2019 = financial_statements(beg_2019,end_2019)
-pprint (fs_2019[0])
-pprint (fs_2019[1])
+pprint (fs_2019["is"])
+pprint (fs_2019["bs"])
 
 # # pprint (assets)
 # # pprint (capital)
