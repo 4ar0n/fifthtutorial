@@ -10,7 +10,7 @@ import csv
 import requests
 from pprint import pprint
 from datetime import datetime , timedelta
-
+from pprint import pprint
 cred_path = "/Users/aaronlee/Downloads/my-project-20190202-7af09df97e06.json"
 
 def write_sheet_data(spreadsheet_id , sheetname ,  data):
@@ -32,6 +32,7 @@ def write_sheet_data(spreadsheet_id , sheetname ,  data):
         request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=range_, valueInputOption=value_input_option, body=value_range_body)
         response = request.execute()
 
+        pprint (response)
 
     except OSError as e:
         print (e)
@@ -63,29 +64,6 @@ def turn_list_to_dict(key,data):
 
 
 
-ac_type_db = [  {"id":1,"category":"Assets"},
-                {"id":2,"category":"Liabilities"},
-                {"id":3,"category":"Capitals"},
-                {"id":4,"category":"Revenues"},
-                {"id":5,"category":"Expenses"},
-            ]
-
-ac_db =     [   {"id":1,"category":1,"account":"Bank"},
-                 {"id":2,"category":3,"account":"Aaron's Capital"},
-                 {"id":4,"category":4,"account":"Tuition Income"},
-                 {"id":5,"category":2,"account":"Loan from Billy"},
-                 {"id":6,"category":5,"account":"Rental Expenses"},
-                 {"id":7,"category":1,"account":"Furnitures"},
-                 {"id":8,"category":5,"account":"Salaries"},
-                 {"id":9,"category":1,"account":"Cash"},
-                 {"id":12,"category":5,"account":"Printing Expenses"},
-                 {"id":13,"category":5,"account":"Stationery"},
-                 {"id":14,"category":4,"account":"Government Subsidy"},
-             ]
-
-branch_db =     [   {"id":1,"branch":"Prince Edward"},
-                    {"id":2,"branch":"Causeway Bay"},
-                ]
 
 
 
